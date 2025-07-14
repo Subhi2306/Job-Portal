@@ -118,27 +118,3 @@ export const getAdminJobs = async (req, res) => {
         console.log(error);
     }
 }
-export const updateJob = async (req, res) => {
-    try {
-        const { title, description, requirements, salary,experienceLevel,location,jobType,position,companyId} = req.body;
-
-        const updateData = { title, description, requirements,salary,experienceLevel,location,jobType,position,company:companyId};
-
-        const job = await Job.findByIdAndUpdate(req.params.id, updateData, { new: true }); // aapko object me true daal dena h taaki aapko saara updated data mile
-
-        if (!job) {
-            return res.status(404).json({
-                // 404=> isliye kyuki company found hi nhi hui
-                message: "Job not found",
-                success: false
-            })
-        }
-        // agar mil jaati h toh 
-        return res.status(200).json({
-            message: "Job informaton updated",
-            success: true
-        })
-    } catch (error) {
-        console.log(error);
-    }
-}

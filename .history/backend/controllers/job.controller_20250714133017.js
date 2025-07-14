@@ -120,9 +120,9 @@ export const getAdminJobs = async (req, res) => {
 }
 export const updateJob = async (req, res) => {
     try {
-        const { title, description, requirements, salary,experienceLevel,location,jobType,position,companyId} = req.body;
+        const { title, description, requirements, salary,experienceLevel,location,jobType,position} = req.body;
 
-        const updateData = { title, description, requirements,salary,experienceLevel,location,jobType,position,company:companyId};
+        const updateData = { title, description, requirements,salary,experienceLevel,location,jobType,position};
 
         const job = await Job.findByIdAndUpdate(req.params.id, updateData, { new: true }); // aapko object me true daal dena h taaki aapko saara updated data mile
 
