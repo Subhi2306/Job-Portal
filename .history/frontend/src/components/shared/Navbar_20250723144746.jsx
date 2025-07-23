@@ -53,6 +53,7 @@ const Navbar = () => {
                                     <li><Link to="/">Home</Link></li>
                                     <li><Link to="/jobs">Jobs</Link></li>
                                     <li><Link to="/browse">Browse</Link></li>
+                                     <li><Link to="/saved-jobs">Saved Jobs</Link></li>
                                 </>
                             )
                         }
@@ -90,15 +91,14 @@ const Navbar = () => {
                                                    </div>
                                                 ) 
                                             }
-
-                                             <div className='flex w-fit items-center gap-2 cursor-pointer'>
-                                                <SaveIcon/>
-                                                <Button variant="link"><Link to="/saved-jobs">Saved Jobs</Link></Button>
-                                            </div>
                                            
                                             <div className='flex w-fit items-center gap-2 cursor-pointer'>
                                                 <LogOut />
                                                 <Button onClick={logoutHandler} variant="link">Logout</Button>
+                                            </div>
+                                            <div>
+                                                <SaveIcon/>
+                                                <Button><Link to="/saved-jobs">Saved Jobs</Link></Button>
                                             </div>
                                         </div>
                                     </div>
