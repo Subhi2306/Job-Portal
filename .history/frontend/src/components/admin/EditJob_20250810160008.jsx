@@ -1,25 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../shared/Navbar";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { useSelector } from "react-redux";
+import {Select,SelectContent,SelectGroup,SelectItem,SelectTrigger,SelectValue,} from "../ui/select";
 import axios from "axios";
+import { JOB_API_END_POINT } from "@/utils/constant";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import useGetJobById from "@/hooks/useGetJobById";
+import { Loader2 } from "lucide-react";
 
-const companyArray = []; // job post krne ke liye pehle company registered honi chahiye usi ke liye yeh kr rha hu
+// const companyArray = []; // job post krne ke liye pehle company registered honi chahiye usi ke liye yeh kr rha hu
 
-const PostJob = () => {
+const EditJob = () => {
+    const params=useParams();
+    useGetJobById(params.id);
   const [input, setInput] = useState({
     title: "",
     description: "",
@@ -27,13 +24,13 @@ const PostJob = () => {
     salary: "",
     location: "",
     jobType: "",
-    experience: "",
+    experienceLevel: "",
     position: 0,
     companyId: "",
   });
+  const {singleJob}=useSelector(store=>store.job);
   const [loading,setLoading]=useState(false);
   const navigate=useNavigate();
-  const dispatch=useDispatch();
   const { companies } = useSelector((store) => store.company);
 
   const changeEventHandler = (e) => {
@@ -45,28 +42,44 @@ const PostJob = () => {
      setInput({...input, companyId:selectedCompany._id})
   };
 
-  const submitHandler= async(e)=>{
+  const submitHandler = async (e) => {
     e.preventDefault();
     try {
-        setLoading(true)
-        const res=await axios.post(`https://job-portal-z56b.onrender.com/api/v1/job/post`,input,{
-            headers:{
-                'Content-Type':'application/json'
-            },
-            withCredentials:true
-        });
-        if(res.data.success){
-            toast.success(res.data.message);
-            navigate("/admin/jobs");
+      setLoading(true);
+      const res = await axios.put(`https://job-portal-z56b.onrender.com/api/v1/job/update/${params.id}`,input,{
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
         }
+      );
+      if (res.data.success) {
+        toast.success(res.data.message || "Job updated");
+        navigate("/admin/jobs");
+      }
     } catch (error) {
-        console.log(error);
-        toast.error(error.response.data.message);
-    } finally{
-       setLoading(false);
-     }
-    
-  }
+      console.error(error);
+      toast.error(error.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+      if (!singleJob || companies.length === 0) return;
+
+  const matchedCompany = companies.find((c) => c._id === singleJob.company?.toString());
+        setInput({
+        title: singleJob.title || "",
+        description: singleJob.description || "",
+        requirements: singleJob.requirements || "",
+        salary: singleJob.salary || "",
+        location: singleJob.location || "",
+        jobType: singleJob.jobType || "",
+        experienceLevel: singleJob.experienceLevel || "",
+        position: singleJob.position || 0,
+         companyId: matchedCompany?._id || "", //  set companyId
+      });
+    },[singleJob,companies]);
   
 
   return (
@@ -139,8 +152,8 @@ const PostJob = () => {
               <Label>Experience Level</Label>
               <Input
                 type="text"
-                name="experience"
-                value={input.experience}
+                name="experienceLevel"
+                value={input.experienceLevel}
                 onChange={changeEventHandler}
                 className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
               />
@@ -156,7 +169,7 @@ const PostJob = () => {
               />
             </div>
             {companies.length > 0 && (
-              <Select onValueChange={selectChangeHandler}>
+              <Select onValueChange={selectChangeHandler}  value={companies.find((c) => c._id === input.companyId)?.name.toLowerCase() || ""} >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select a Company" />
                 </SelectTrigger>
@@ -172,16 +185,23 @@ const PostJob = () => {
               </Select>
             )}
           </div>
-          <Button className="w-full font-bold mt-4 bg-[#0ca3d5] hover:bg-[#0f98e9]">Post New Job</Button>
-          
-          {
-         
-             companies.length === 0 && <p className="text-xs text-red-600 font-bold text-center my-3">*Please register a company first, before posting the jobs</p>
-          }
+          {loading ? (
+            <Button className="w-full my-4 text-white bg-[#1c0cca] hover:bg-[#120cca]">
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Please wait
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              className="w-full my-4 text-white bg-[#140de4] hover:bg-[#140de4]"
+            >
+              Update
+            </Button>
+          )}
         </form>
       </div>
     </div>
   );
 };
 
-export default PostJob;
+export default EditJob;

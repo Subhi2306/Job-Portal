@@ -5,6 +5,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import axios from "axios";
+import { COMPANY_API_END_POINT } from "@/utils/constant";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
@@ -49,7 +50,7 @@ const CompanySetup = () => {
     try {
       setLoading(true);
       const res = await axios.put(
-        `https://job-portal-z56b.onrender.com/api/v1/company/update/${params.id}`,
+        `${COMPANY_API_END_POINT}/update/${params.id}`,
         formData,
         {
           // company ki id daalni h company ki id params se get ho jaygi

@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import axios, { Axios } from 'axios';
 import { setSingleJob } from '@/redux/jobSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { APPLICATION_API_END_POINT, JOB_API_END_POINT } from '@/utils/constant';
 import { toast } from 'sonner';
 
 const JobDescription = () => {
@@ -24,7 +25,7 @@ const JobDescription = () => {
 
    const applyJobHandler=async() => {
      try {
-        const res= await axios.get(`https://job-portal-z56b.onrender.com/api/v1/application/apply/${jobId}`, {withCredentials:true});
+        const res= await axios.get(`${APPLICATION_API_END_POINT}/apply/${jobId}`, {withCredentials:true});
         console.log(res.data);
         
         if(res.data.success){
@@ -43,7 +44,7 @@ const JobDescription = () => {
    useEffect(() => {
            const fetchSingleJob= async () => {
                try {
-                   const res=await axios.get(`https://job-portal-z56b.onrender.com/api/v1/job/get/${jobId}`,{withCredentials:true});
+                   const res=await axios.get(`${JOB_API_END_POINT}/get/${jobId}`,{withCredentials:true});
                    if(res.data.success){
                     dispatch(setSingleJob(res.data.job));
                     setIsApplied(res.data.job.applications.some(application=>application.applicant===user?.Id)) // Ensure the state is in sync with fetched data
