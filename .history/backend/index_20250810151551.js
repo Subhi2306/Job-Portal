@@ -50,7 +50,7 @@ const app = express();
   app.use(cors(corsoptions));
  
 // create no of ports
-const PORT= process.env.PORT || 5000;
+const PORT= process.env.PORT || 3000;
 
 // for deployment
 const _dirname= path.resolve();
